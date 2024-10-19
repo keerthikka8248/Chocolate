@@ -1,0 +1,133 @@
+/* General styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Wild Ride Regular', sans-serif;
+    background-color: #4E3629; /* Brown theme */
+    color: #D4AF37; /* Light golden color */
+  }
+  
+  .home {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  /* Header */
+  .header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #3C2415;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #D4AF37;
+    z-index: 1000;
+  }
+  
+  .header h1 {
+    font-family: 'Bite Chocolate', sans-serif;
+  }
+  
+  .header nav ul {
+    display: flex;
+    gap: 20px;
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .header nav ul li a {
+    color: #D4AF37;
+    text-decoration: none;
+    font-family: 'Lunchtime', sans-serif;
+  }
+  
+  /* Hero Section */
+  .hero {
+    display: flex;
+    align-items: center;
+    padding-top: 100px;
+    padding-bottom: 50px;
+  }
+  
+  .hero-image img {
+    max-width: 500px;
+    height: auto;
+  }
+  
+  .hero-text {
+    margin-left: 50px;
+  }
+  
+  .hero-text h2 {
+    font-size: 3rem;
+  }
+  
+  .hero-text p {
+    font-size: 1.5rem;
+  }
+  
+  /* Our Specials Section */
+  .specials {
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  .specials h2 {
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+  }
+  
+  .specials-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  
+  .special-item img {
+    width: 100%;
+    height: auto;
+  }
+  
+  .special-item p {
+    font-size: 1.2rem;
+    margin-top: 10px;
+  }
+  
+  /* Reviews Section */
+  .reviews {
+    margin-top: 50px;
+    text-align: center;
+  }
+  
+  .reviews-slider {
+    display: flex;
+    overflow-x: auto;
+    gap: 20px;
+    scroll-snap-type: x mandatory;
+  }
+  
+  .review-slide {
+    flex: 0 0 25%;
+    scroll-snap-align: center;
+    background-color: #3C2415;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  /* Footer */
+  .footer {
+    background-color: #3C2415;
+    padding: 20px;
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  .footer a {
+    color: #D4AF37;
+    text-decoration: none;
+    font-family: 'Lunchtime', sans-serif;
+  }
+  
