@@ -1,19 +1,38 @@
 const express = require("express")
 const app = express()
+require("dotenv").config()
+
+const cors = require("cors");
+const morgan = require("morgan");
+app.use(cors()); // Enable CORS
+app.use(morgan("dev")); // Logging requests
+app.use(express.json());
 
 const mongoose = require("mongoose")
 
-const port = 5000
+const port = process.env.PORT||5000
+const mongo_url = process.env.MONGO_URL
 
 async function DBconnection(){
     try{
-        await mongoose.connect("mongodb://localhost:27017/chocolates")
+        await mongoose.connect(mongo_url,{serverSelectionTimeoutMS: 5000 })
         app.listen(port,function(){
             console.log(`DB Connected - Listening to port ${port}`)
         })
     }
     catch(error){
+        console.log("Error in connecting to DB")
         console.log(error)
     }
 }
 DBconnection();
+
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`, req.body);
+    next();
+});
+
+const productRoutes = require("./routes/productRoutes");
+
+app.use("/api/products", productRoutes);
+
