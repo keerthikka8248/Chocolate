@@ -162,7 +162,7 @@ exports.addToCart = async (req,res)=> {
             existngItem.quantity += quantity;
         }
         else{
-            user.createdAt.push({product: productId, quantity});
+            user.cart.push({product: productId, quantity});
         }
 
         await user.save();
