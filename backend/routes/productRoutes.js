@@ -7,6 +7,7 @@ const {
     getProductById,
     updateProduct,
     deleteProduct,
+    getSpecialProducts
 } = require("../controllers/productControllers");
 
 // Routes
@@ -15,5 +16,6 @@ router.post("/addProduct", addProduct); // Add a new product
 router.get("/getProduct/:id", getProductById); // Get product by ID
 router.put("/updateProduct/:id", updateProduct); // Update product
 router.delete("/deleteProduct/:id", deleteProduct); // Delete product
+router.get('/specials', getSpecialProducts); // get Special Products alone
 
 module.exports = router;

@@ -69,3 +69,14 @@ exports.deleteProduct = async (req, res) => {
         res.status(500).json({ error: "Error deleting product" });
     }
 };
+
+// Get special products
+exports.getSpecialProducts = async (req, res) => {
+    try {
+        const specials = await Product.find({ isSpecial: true }); // Fetch only special products
+        res.status(200).json(specials);
+    } catch (error) {
+        console.error("Error fetching specials:", error.message);
+        res.status(500).json({ message: "Error fetching specials" });
+    }
+};

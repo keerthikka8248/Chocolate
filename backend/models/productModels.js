@@ -9,6 +9,7 @@ const productSchema = new mongoose.Schema({
     category: { type: String, required: true }, // E.g., "Chocolate"
     stock: { type: Number, default: 0 },
     ratings: { type: Number, default: 0 },
+    isSpecial: { type: Boolean, default: false }, 
 });
 
 module.exports = mongoose.model("Product", productSchema);
