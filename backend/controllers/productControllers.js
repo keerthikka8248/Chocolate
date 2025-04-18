@@ -80,3 +80,87 @@ exports.getSpecialProducts = async (req, res) => {
         res.status(500).json({ message: "Error fetching specials" });
     }
 };
+
+// Add or Update Review
+exports.addReview = async (req, res) => {
+    try {
+        const { rating, comment } = req.body;
+        const product = await Product.findById(req.params.productId);
+
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        const alreadyReviewed = product.reviews.find(
+            (r) => r.user.toString() === req.user._id.toString()
+        );
+
+        if (alreadyReviewed) {
+            // Update existing review
+            alreadyReviewed.rating = rating;
+            alreadyReviewed.comment = comment;
+        } else {
+            // Add new review
+            const review = {
+                user: req.user._id,
+                name: req.user.name,
+                rating: Number(rating),
+                comment
+            };
+            product.reviews.push(review);
+        }
+
+        // Recalculate average rating and total reviews
+        product.numReviews = product.reviews.length;
+        product.ratings = product.reviews.reduce((acc, item) => item.rating + acc, 0) / product.reviews.length;
+
+        await product.save();
+        res.status(200).json({ message: "Review added/updated" });
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Get all reviews of a product
+exports.getProductReviews = async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.productId).populate("reviews.user", "name email");
+
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        res.status(200).json({ reviews: product.reviews });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Get a few reviews from multiple products for homepage
+exports.getHomePageReviews = async (req, res) => {
+    try {
+      const products = await Product.find({ "reviews.0": { $exists: true } }); // Products that have at least 1 review
+  
+      let allReviews = [];
+  
+      products.forEach((product) => {
+        product.reviews.forEach((review) => {
+          allReviews.push({
+            productId: product._id,
+            productName: product.name,
+            productImage: product.image,
+            ...review._doc, // Include user, name, rating, comment
+          });
+        });
+      });
+  
+      // Shuffle and pick 4 random reviews
+      allReviews = allReviews.sort(() => 0.5 - Math.random()).slice(0, 4);
+  
+      res.status(200).json(allReviews);
+    } catch (error) {
+      console.error("Error fetching homepage reviews:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  };
