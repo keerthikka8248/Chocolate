@@ -1,85 +1,87 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React from 'react';
 import { FaHeart, FaShoppingCart, FaStar } from 'react-icons/fa';
+import { handleAddToWishlist,handleAddToCart } from '../utils/userActions';
 
-const ProductDetail = () => {
-  const { id } = useParams();
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetch(`http://localhost:5000/api/products/getProduct/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setProduct(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching product:', error);
-        setLoading(false);
-      });
-  }, [id]);
-
+const ProductDetail = ({ product, closeModal }) => {
   const styles = {
-    container: {
+    overlay: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      height: '100vh',
+      width: '100vw',
+      backgroundColor: 'rgba(0,0,0,0.5)',
       display: 'flex',
-      flexWrap: 'wrap',
-      padding: '40px',
-      background: 'linear-gradient(to bottom right, #fff3e0, #d7ccc8)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 1000,
+    },
+    modal: {
+      backgroundColor: '#fff3e0',
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      maxWidth: '90%',
+      width: '900px',
+      height: '90vh',
       borderRadius: '20px',
-      maxWidth: '1000px',
-      margin: '50px auto',
-      boxShadow: '0 10px 30px rgba(62, 39, 35, 0.2)',
-      fontFamily: 'Segoe UI, sans-serif',
-      color: '#4e342e',
+      overflow: 'hidden',
+      position: 'relative',
+    },
+    closeBtn: {
+      position: 'absolute',
+      top: '15px',
+      right: '20px',
+      fontSize: '24px',
+      background: 'none',
+      border: 'none',
+      cursor: 'pointer',
+      color: '#3e2723',
     },
     imageSection: {
-      flex: '1 1 40%',
-      textAlign: 'center',
       padding: '20px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#fff',
     },
     image: {
       width: '100%',
       maxWidth: '350px',
-      borderRadius: '15px',
+      borderRadius: '10px',
       boxShadow: '0 5px 15px rgba(62, 39, 35, 0.3)',
-      transition: 'transform 0.3s ease',
     },
-    detailsSection: {
-      flex: '1 1 60%',
-      padding: '20px',
+    details: {
+      padding: '30px',
+      overflowY: 'auto',
     },
     title: {
-      fontSize: '36px',
-      color: '#3e2723',
+      fontSize: '32px',
       marginBottom: '10px',
+      color: '#3e2723',
     },
     category: {
       fontSize: '16px',
-      color: '#6d4c41',
       marginBottom: '10px',
     },
     description: {
-      fontSize: '18px',
-      color: '#5d4037',
-      marginBottom: '20px',
+      fontSize: '16px',
+      marginBottom: '15px',
     },
     rating: {
-      fontSize: '20px',
-      color: '#ffca28',
+      color: '#ffc107',
       marginBottom: '10px',
     },
     price: {
-      fontSize: '28px',
-      fontWeight: 'bold',
+      fontSize: '24px',
       color: '#388e3c',
       marginBottom: '10px',
     },
     stock: {
-      fontSize: '16px',
+      fontSize: '14px',
       marginBottom: '20px',
     },
-    buttonGroup: {
+    actions: {
       display: 'flex',
       gap: '15px',
     },
@@ -87,56 +89,44 @@ const ProductDetail = () => {
       backgroundColor: '#6d4c41',
       color: '#fff',
       border: 'none',
-      padding: '12px 20px',
-      borderRadius: '10px',
-      fontSize: '16px',
-      cursor: 'pointer',
+      padding: '10px 16px',
+      borderRadius: '8px',
+      fontSize: '15px',
       display: 'flex',
       alignItems: 'center',
-      gap: '10px',
-      transition: 'background 0.3s',
+      gap: '8px',
+      cursor: 'pointer',
     },
   };
 
-  if (loading) {
-    return <div style={{ textAlign: 'center', padding: '50px' }}>Loading...</div>;
-  }
+  const addToWishlist = () => handleAddToWishlist(product._id);
+  const addToCart = () => handleAddToCart(product._id);
 
-  if (!product) {
-    return <div style={{ textAlign: 'center', padding: '50px', color: 'red' }}>Product not found.</div>;
-  }
 
   return (
-    <div style={styles.container}>
-      <div style={styles.imageSection}>
-        <img
-          src={product.image}
-          alt={product.name}
-          style={styles.image}
-          onMouseOver={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-          onMouseOut={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-        />
-      </div>
-      <div style={styles.detailsSection}>
-        <h1 style={styles.title}>{product.name}</h1>
-        <p style={styles.category}>Category: {product.category}</p>
-        <p style={styles.description}>{product.description}</p>
-        <div style={styles.rating}>
-          {Array.from({ length: Math.round(product.ratings) }).map((_, i) => (
-            <FaStar key={i} />
-          ))}
+    <div style={styles.overlay}>
+      <div style={styles.modal}>
+        <button onClick={closeModal} style={styles.closeBtn}>✖</button>
+        <div style={styles.imageSection}>
+          <img src={product.image} alt={product.name} style={styles.image} />
         </div>
-        <p style={styles.price}>${product.price}</p>
-        <p style={styles.stock}>
-          {product.stock > 0 ? `Stock: ${product.stock}` : 'Out of stock'}
-        </p>
-        <div style={styles.buttonGroup}>
-          <button style={styles.button}>
-            <FaHeart /> Wishlist
-          </button>
-          <button style={styles.button}>
-            <FaShoppingCart /> Add to Cart
-          </button>
+        <div style={styles.details}>
+          <h1 style={styles.title}>{product.name}</h1>
+          <p style={styles.category}>Category: {product.category}</p>
+          <p style={styles.description}>{product.description}</p>
+          <div style={styles.rating}>
+            {Array.from({ length: Math.round(product.ratings) }).map((_, i) => (
+              <FaStar key={i} />
+            ))}
+          </div>
+          <p style={styles.price}>${product.price}</p>
+          <p style={styles.stock}>
+            {product.stock > 0 ? `Stock: ${product.stock}` : 'Out of stock'}
+          </p>
+          <div style={styles.actions}>
+            <button style={styles.button} onClick={addToWishlist}><FaHeart /> Wishlist</button>
+            <button style={styles.button} onClick={addToCart}><FaShoppingCart /> Add to Cart</button>
+          </div>
         </div>
       </div>
     </div>

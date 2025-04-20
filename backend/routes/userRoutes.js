@@ -25,7 +25,7 @@ router.get('/wishlist', protect, getWishlist);
 router.delete('/removewishlist/:productId', protect, removeFromWishlist);
 
 //Cart routes
-router.post('/addcart', protect, addToCart);
+router.post('/addcart/:productId', protect, addToCart);
 router.get('/cart', protect, getCart);
 router.delete('/removecart/:productId', protect, removeFromCart);
 

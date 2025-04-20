@@ -1,27 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import ProductCard from '../Components/ProductCard';
-import FilterBar from '../Components/FilterSidebar'; // ✅ We'll create this
+import FilterBar from '../Components/FilterSidebar';
+import ProductDetail from './ProductDetail'; // 👈 Import modal
 
-const Products = () => {
-  const [products, setProducts] = useState([]);
+const Products = ({ products, searchQuery }) => {
   const [filterOptions, setFilterOptions] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState(null); // 👈 Modal product
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/products/getProducts')
-      .then((response) => response.json())
-      .then((data) => {
-        setProducts(data);
-        extractFilterOptions(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching products:', error);
-        setLoading(false);
-      });
-  }, []);
+    if (products.length) {
+      extractFilterOptions(products);
+      setLoading(false);
+    }
+  }, [products]);
 
   const extractFilterOptions = (products) => {
     const allCategories = products.flatMap(p => p.category.split('-'));
@@ -30,8 +23,14 @@ const Products = () => {
   };
 
   const filteredProducts = selectedFilter
-    ? products.filter(product => product.category.includes(selectedFilter))
+    ? products.filter(p => p.category.includes(selectedFilter))
     : products;
+
+  const searchedProducts = searchQuery
+    ? filteredProducts.filter(p =>
+        p.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : filteredProducts;
 
   const styles = {
     container: {
@@ -65,14 +64,26 @@ const Products = () => {
       <div style={styles.productList}>
         {loading ? (
           <div>Loading...</div>
-        ) : (
-          filteredProducts.map(product => (
-            <Link to={`/products/${product._id}`} key={product._id}>
-              <ProductCard product={product} />
-            </Link>
+        ) : searchedProducts.length ? (
+          searchedProducts.map(product => (
+            <ProductCard 
+              key={product._id} 
+              product={product} 
+              onClick={() => setSelectedProduct(product)} 
+            />
           ))
+        ) : (
+          <div>Product not available</div>
         )}
       </div>
+
+      {/* Show product detail modal */}
+      {selectedProduct && (
+        <ProductDetail 
+          product={selectedProduct} 
+          closeModal={() => setSelectedProduct(null)} 
+        />
+      )}
     </div>
   );
 };

@@ -1,10 +1,23 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import logo from '../assets/images/logo.png';
 
-const Navbar = ({ isLoggedIn }) => {
+const Navbar = ({ isLoggedIn, searchQuery, setSearchQuery }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  if (location.pathname === '/') return null;
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSearchSubmit = (e) => {
+    if (e.key === 'Enter') {
+      navigate('/products');
+    }
+  };
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
@@ -61,18 +74,6 @@ const Navbar = ({ isLoggedIn }) => {
       textTransform: 'uppercase',
       transition: 'color 0.3s',
     },
-    mobileMenu: {
-      position: 'absolute',
-      top: '70px',
-      left: 0,
-      width: '100%',
-      backgroundColor: '#4E342E',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      padding: '15px 0',
-      gap: '15px',
-    },
     rightSection: {
       display: 'flex',
       gap: '15px',
@@ -93,9 +94,19 @@ const Navbar = ({ isLoggedIn }) => {
       borderRadius: '6px',
       fontWeight: '600',
     },
+    mobileMenu: {
+      position: 'absolute',
+      top: '70px',
+      left: 0,
+      width: '100%',
+      backgroundColor: '#4E342E',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      padding: '15px 0',
+      gap: '15px',
+    },
   };
-
-  if (location.pathname === '/') return null;
 
   return (
     <>
@@ -144,13 +155,20 @@ const Navbar = ({ isLoggedIn }) => {
           <li><Link to="/" style={styles.navLinkItem} className="nav-link">Home</Link></li>
           <li><Link to="/products" style={styles.navLinkItem} className="nav-link">Shop</Link></li>
           <li><Link to="/about" style={styles.navLinkItem} className="nav-link">About</Link></li>
+          <li><Link to={isLoggedIn ? "/profile" : "/login"} style={styles.loginBtn} className="nav-link">
+            {isLoggedIn ? 'Profile' : 'Login'}
+          </Link></li>
         </ul>
 
         <div style={styles.rightSection} className="right-section">
-          <input type="text" placeholder="Search..." style={styles.searchInput} />
-          <Link to={isLoggedIn ? "/profile" : "/login"} style={styles.loginBtn}>
-            {isLoggedIn ? "Profile" : "Login"}
-          </Link>
+          <input
+            type="text"
+            placeholder="Search..."
+            style={styles.searchInput}
+            value={searchQuery}
+            onChange={handleSearchChange}
+            onKeyDown={handleSearchSubmit}
+          />
         </div>
       </nav>
 
@@ -160,7 +178,7 @@ const Navbar = ({ isLoggedIn }) => {
           <Link to="/" style={styles.navLinkItem} className="nav-link" onClick={toggleMenu}>Home</Link>
           <Link to="/products" style={styles.navLinkItem} className="nav-link" onClick={toggleMenu}>Shop</Link>
           <Link to="/about" style={styles.navLinkItem} className="nav-link" onClick={toggleMenu}>About</Link>
-          <Link to={isLoggedIn ? "/profile" : "/login"} style={styles.loginBtn} onClick={toggleMenu}>
+          <Link to={isLoggedIn ? "/profile" : "/login"} style={styles.loginBtn} className="nav-link" onClick={toggleMenu}>
             {isLoggedIn ? "Profile" : "Login"}
           </Link>
         </div>

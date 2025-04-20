@@ -1,71 +1,68 @@
 import React from 'react';
+import { FaHeart, FaShoppingCart } from 'react-icons/fa';
+import { handleAddToWishlist,handleAddToCart } from '../utils/userActions';
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, onClick }) => {
   const styles = {
     card: {
       backgroundColor: '#fff',
       borderRadius: '10px',
       boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
       padding: '20px',
-      width: '250px',
+      width: '220px',
       textAlign: 'center',
-      transition: 'transform 0.3s',
-    },
-    cardHover: {
-      transform: 'translateY(-10px)',
+      cursor: 'pointer',
     },
     image: {
       width: '100%',
-      height: '200px',
+      height: '180px',
       objectFit: 'cover',
       borderRadius: '10px',
     },
     name: {
-      fontSize: '20px',
+      fontSize: '18px',
       marginTop: '10px',
+      color: '#333',
     },
     price: {
-      fontSize: '18px',
-      color: '#3e2723',
-    },
-    description: {
-      fontSize: '14px',
-      color: '#6d4c41',
-      marginBottom: '10px',
-    },
-    button: {
-      backgroundColor: '#ff5722',
-      color: 'white',
-      border: 'none',
-      padding: '10px 20px',
-      cursor: 'pointer',
-      borderRadius: '5px',
       fontSize: '16px',
+      color: '#4CAF50',
+      fontWeight: 'bold',
     },
-    buttonHover: {
-      backgroundColor: '#e64a19',
+    iconContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      gap: '15px',
+      marginTop: '10px',
+    },
+    icon: {
+      fontSize: '18px',
+      color: '#6d4c41',
+      cursor: 'pointer',
     },
   };
 
+  const addToWishlist = (e) => {
+    e.stopPropagation();
+    handleAddToWishlist(product._id);
+  };
+
+  const addToCart = (e) => {
+    e.stopPropagation();
+    handleAddToCart(product._id);
+  };
+
   return (
-    <div 
-      style={styles.card} 
-      onMouseEnter={(e) => (e.target.style.transform = 'translateY(-10px)')} 
-      onMouseLeave={(e) => (e.target.style.transform = '')}
-    >
+    <div style={styles.card} onClick={onClick}>
       <img src={product.image} alt={product.name} style={styles.image} />
       <h3 style={styles.name}>{product.name}</h3>
       <p style={styles.price}>${product.price}</p>
-      <p style={styles.description}>{product.description}</p>
-      <button 
-        style={styles.button} 
-        onMouseEnter={(e) => (e.target.style.backgroundColor = '#e64a19')} 
-        onMouseLeave={(e) => (e.target.style.backgroundColor = '#ff5722')}
-      >
-        Add to Cart
-      </button>
+      <div style={styles.iconContainer}>
+        <FaHeart title="Add to Wishlist" style={styles.icon} onClick={addToWishlist} />
+        <FaShoppingCart title="Add to Cart" style={styles.icon} onClick={addToCart} />
+      </div>
     </div>
   );
-}
+};
 
 export default ProductCard;
